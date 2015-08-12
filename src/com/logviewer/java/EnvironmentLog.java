@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -78,7 +80,7 @@ public class EnvironmentLog extends HttpServlet {
 		 FileOutputStream fos=null;
 		try {
 	         String prefix=null;
-			String lfile = "D:\\Logs\\logs"+Integer.toString(j)+".txt";
+			String lfile = "D:\\Logs\\Logs_MPServer"+Integer.toString(j)+".txt";
 		      if(new File(lfile).isDirectory()){
 		        prefix=lfile+File.separator;
 		      }
@@ -188,13 +190,17 @@ public class EnvironmentLog extends HttpServlet {
 	 * @param searchKey
 	 * @return 
 	 */
-	@SuppressWarnings("resource")
+
 	private static Session executeSearch(String user,String targetServerIP,int port,String searchKey){
 		Session targetServerSession = null;
 		try{
+			//targetServerIP="10.13.5.31";
 			//Target Session Creation
+			System.out.println(targetServerIP);
 			int assinged_port = jumpHostSession.setPortForwardingL(0, targetServerIP, port);
-			targetServerSession = jumpHostSession  =   jsch.getSession(user, "127.0.0.1", assinged_port);
+			System.out.println("PortForward");
+			targetServerSession = jumpHostSession =jsch.getSession(user, "127.0.0.1", assinged_port);
+			System.out.println("targetsession");
 			java.util.Properties targetServerConfig = new java.util.Properties();
 			targetServerConfig.put("StrictHostKeyChecking","no");
 			targetServerSession.setConfig(targetServerConfig);
@@ -249,23 +255,38 @@ public class EnvironmentLog extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		String environmentName = request.getParameter("environmentName");
+		String userId = request.getParameter("userId");
+		String passPhrase = request.getParameter("passPhrase");
+		String searchKey = request.getParameter("searchKey");
+		
+		System.out.println("Env selected:"+environmentName);
+		System.out.println("userId"+userId);
+		System.out.println("passPhrase"+passPhrase);
+		System.out.println("searchKey"+searchKey);
 		System.out.println("POST");
 		try {
-			/* Variable Initializations */
-			String user = "bp9640";
+			Properties prop = new Properties();
+			InputStream input = null;
+			response.setContentType("text/html");
+			input = getServletContext().getResourceAsStream("ApplicationProperties.properties");
+			prop.load(input);
+
+			String Prop_Values = prop.getProperty(environmentName);
+			System.out.println("Prop Val:"+Prop_Values);
+			
+			String[] targetServerIPArray = Prop_Values.split(",");
+			System.out.println("Prop Val:"+Prop_Values);
+			
 			String jumpHostServerIP = "76.198.14.170";
-			String[] targetServerIPArray = {"10.13.5.31","10.13.5.32","10.13.5.33","10.13.5.34","10.13.5.35","10.13.5.36"};
-			//String[] targetServerIPArray = {"10.13.5.31"};
 			int port = 22;
-			String passphrase = "techmahindra";
-			String searchKey="RaiseFault";
 			Session targetServerSession = null;
 			//JumpHost Session Creation
-			createJumpHostSession(user,passphrase,jumpHostServerIP,port);
+			createJumpHostSession(userId,passPhrase,jumpHostServerIP,port);
 			int j=1;
 			//TargetServerSearch
 			for (String targetServerIP : targetServerIPArray ){
-				targetServerSession = executeSearch(user,targetServerIP,port,searchKey);
+				targetServerSession = executeSearch(userId,targetServerIP,port,searchKey);
 				fetchfile(targetServerSession,j);
 				j=j+1;
 			}
@@ -273,8 +294,7 @@ public class EnvironmentLog extends HttpServlet {
 			System.out.println("Completed");
 
 		} catch (Exception e) {
-			System.err.println(e);
-			e.printStackTrace(System.out);
+			e.printStackTrace();
 		}	
 	}
 

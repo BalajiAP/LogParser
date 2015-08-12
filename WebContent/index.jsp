@@ -8,9 +8,38 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>LogParser</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+	
+	
+    $("#btnViewLog").click(function(){
+		
+		var environmentName=$("#envName").val();
+		var userId=$("#userId").val();
+		var passPhrase=$("#passPhrase").val();
+		var searchKey=$("#searchKey").val();
+		
+		$.ajax({
+	        type: "post",
+	        url: "/LogParser/EnvironmentLog", //this is my servlet
+	        dataType : 'text',
+	        data:"environmentName="+environmentName+"&userId="+userId+"&passPhrase="+passPhrase+"&searchKey="+searchKey,
+	     
+	        success: function(response){
+	        	console.log(response);
+	        	 //sendMessage(response);
+	        }, error: function(e){
+	        	var error=JSON.stringify(e);
+	        	   alert('Error: ' +error);
+	        }
+	  });
+    });
+});
+</script>
 </head>
 <body>
-	<form name="f1" action="EnvironmentLog" method="post">
+	
 		<font size=4 face="verdana" color=#120292> 
 		<marquee>Environment wise Log viewer</marquee> <br>
 		<br>
@@ -18,11 +47,11 @@
 				rowspan=2 align="center">
 				<tr>
 					<td>Enter UserId</td>
-					<td><input type=text name="uid"></td>
+					<td><input type=text id="userId" name="userId"></td>
 				</tr>
 				<tr>
 					<td>Enter Passphrase</td>
-					<td><input type=password name="passphrase"></td>
+					<td><input type=password id="passPhrase" name="passPhrase"></td>
 				</tr>
 				<tr>
 					<td>Enter Environment</td>
@@ -32,8 +61,7 @@
 							<select id="envName" name="envName">
 								<option value="-1">--Please Select--</option>
 								<%
-											String[] envList = resource.getString("ENVIRONMENT-NAMES").split(
-													",");
+											String[] envList = resource.getString("ENVIRONMENT-NAMES").split(",");
 											for (String env : envList) {
 										%>
 								<option value='<%=env%>'><%=env%></option>
@@ -45,16 +73,16 @@
 				</tr>
 				<tr>
 					<td>Enter SearchKey</td>
-					<td><input type=SearchKey name="SearchKey"></td>
+					<td><input type=text id="searchKey" name="searchKey"></td>
 				</tr>
 			</table> <br>
 			<table align="center">
 				<tr>
-					<td><input type="Submit" value="ViewLog"></td>
+					<button id="btnViewLog">View Log</button>
 				</tr>
 			</table>
 		</font>
-	</form>
+	
 
 </body>
 </html>
