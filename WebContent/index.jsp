@@ -19,21 +19,35 @@ $(document).ready(function(){
 		var userId=$("#userId").val();
 		var passPhrase=$("#passPhrase").val();
 		var searchKey=$("#searchKey").val();
-		
-		$.ajax({
-	        type: "post",
-	        url: "/LogParser/EnvironmentLog", //this is my servlet
-	        dataType : 'text',
-	        data:"environmentName="+environmentName+"&userId="+userId+"&passPhrase="+passPhrase+"&searchKey="+searchKey,
-	     
-	        success: function(response){
-	        	console.log(response);
-	        	 //sendMessage(response);
-	        }, error: function(e){
-	        	var error=JSON.stringify(e);
-	        	   alert('Error: ' +error);
-	        }
-	  });
+		if(userId !="" && userId != null && passPhrase !="" && passPhrase != null &&  searchKey !="" && searchKey !=null && environmentName != "" && environmentName != null ){
+			$.ajax({
+		        type: "post",
+		        url: "/LogParser/EnvironmentLog", //this is my servlet
+		        dataType : 'text',
+		        data:"environmentName="+environmentName+"&userId="+userId+"&passPhrase="+passPhrase+"&searchKey="+searchKey,
+		     
+		        success: function(response){
+		        	console.log(response);
+		        	 //sendMessage(response);
+		        }, error: function(e){
+		        	var error=JSON.stringify(e);
+		        	   alert('Error: ' +error);
+		        }
+		  });
+		}
+		else if (environmentName == "" || environmentName == null){
+			alert("Please select  environmentName");
+		}
+		else if (userId =="" || userId == null){
+			alert("Please enter UserId");
+		}
+		else if (passPhrase =="" || passPhrase == null){
+			alert("Please enter passPhrase");
+		}
+		else if (searchKey =="" || searchKey == null){
+			alert("Please enter searchKey");
+		}
+
     });
 });
 </script>
