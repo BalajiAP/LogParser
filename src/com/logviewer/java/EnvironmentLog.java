@@ -29,7 +29,6 @@ import com.jcraft.jsch.Session;
 @WebServlet("/EnvironmentLog")
 public class EnvironmentLog extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static String rsaLocation = "C:/Users/ba0087036/.ssh/id_rsa";
 	private static Session jumpHostSession;
 	private static JSch jsch;   
     /**
@@ -75,12 +74,13 @@ public class EnvironmentLog extends HttpServlet {
 	    }
 	    return b;
 	  }
-	private static void fetchfile(Session targetServerSession, int j) {
+	private static void fetchfile(Session targetServerSession, int j, String outputFolder) {
 		// TODO Auto-generated method stub
 		 FileOutputStream fos=null;
 		try {
 	         String prefix=null;
-			String lfile = "D:\\Logs\\Logs_MPServer"+Integer.toString(j)+".txt";
+	         String lfile=outputFolder+"\\Logs_MPServer"+Integer.toString(j)+".txt";
+		//	String lfile = "D:\\Logs\\Logs_MPServer"+Integer.toString(j)+".txt";
 		      if(new File(lfile).isDirectory()){
 		        prefix=lfile+File.separator;
 		      }
@@ -160,7 +160,7 @@ public class EnvironmentLog extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-	private static void createJumpHostSession(String user,String passPhrase,String jumpHostServerIP,int port){
+	private static void createJumpHostSession(String user,String passPhrase,String jumpHostServerIP,int port, String rsaLocation){
 		try{
 			jsch = new JSch();
 
@@ -273,21 +273,21 @@ public class EnvironmentLog extends HttpServlet {
 			prop.load(input);
 
 			String Prop_Values = prop.getProperty(environmentName);
-			System.out.println("Prop Val:"+Prop_Values);
-			
+			System.out.println("MP_Server_IP's:"+Prop_Values);
 			String[] targetServerIPArray = Prop_Values.split(",");
-			System.out.println("Prop Val:"+Prop_Values);
-			
-			String jumpHostServerIP = "76.198.14.170";
+			String jumpHostServerIP=prop.getProperty(environmentName+"_JUMPHOST");
+			String rsaLocation=prop.getProperty("RSA_Location");
+			String outputFolder=prop.getProperty("OUTPUT_FOLDER");
+			//String jumpHostServerIP = "76.198.14.170";
 			int port = 22;
 			Session targetServerSession = null;
 			//JumpHost Session Creation
-			createJumpHostSession(userId,passPhrase,jumpHostServerIP,port);
+			createJumpHostSession(userId,passPhrase,jumpHostServerIP,port,rsaLocation);
 			int j=1;
 			//TargetServerSearch
 			for (String targetServerIP : targetServerIPArray ){
 				targetServerSession = executeSearch(userId,targetServerIP,port,searchKey);
-				fetchfile(targetServerSession,j);
+				fetchfile(targetServerSession,j,outputFolder);
 				j=j+1;
 			}
 			
