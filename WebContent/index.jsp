@@ -52,23 +52,24 @@ $(document).ready(function(){
 });
 </script>
 </head>
-<body>
+<body style="background-color:#3498DB">
 	
-		<font size=4 face="verdana" color=#120292> 
+		<font size=5 face="verdana" color="#FFF"> 
 		<marquee>Environment wise Log viewer</marquee> <br>
 		<br>
-			<table cellspacing=5 cellpadding=5 bgcolor=#959999 colspan=2
-				rowspan=2 align="center">
+		<br>
+		<br>
+			<table cellspacing=20 cellpadding=20 bgcolor=#FFF colspan=2 rowspan=2 align="center">
 				<tr>
-					<td>Enter UserId</td>
+					<td style="color:#777">Enter UserId</td>
 					<td><input type=text id="userId" name="userId"></td>
 				</tr>
 				<tr>
-					<td>Enter Passphrase</td>
+					<td style="color:#777">Enter Passphrase</td>
 					<td><input type=password id="passPhrase" name="passPhrase"></td>
 				</tr>
 				<tr>
-					<td>Enter Environment</td>
+					<td style="color:#777">Enter Environment</td>
 					<!-- <td><input type=Environment name="Environment"></td> -->
 					<td>
 						<div class="styled-select">
@@ -86,13 +87,15 @@ $(document).ready(function(){
 						</div>
 				</tr>
 				<tr>
-					<td>Enter SearchKey</td>
+					<td style="color:#777">Enter SearchKey</td>
 					<td><input type=text id="searchKey" name="searchKey"></td>
 				</tr>
 			</table> <br>
 			<table align="center">
 				<tr>
-					<button id="btnViewLog">View Log</button>
+				<td>					
+					<button id="btnViewLog" style="color:#777;width: 100px;height: 50px">View Log</button>				
+				</td>
 				</tr>
 			</table>
 		</font>
